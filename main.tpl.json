@@ -1,0 +1,208 @@
+{
+    "module": [
+      {
+        "networking": [
+          {
+            "azs": "var.azs",
+            "client": "var.client",
+            "database_private_subnets": "var.vpc_database_subnets",
+            "enable_dns_hostnames": "var.enable_dns_hostnames",
+            "enable_dns_support": "var.enable_dns_support",
+            "environment": "var.environment",
+            "private_subnets": "var.private_subnets",
+            "public_subnets": "var.public_subnets",
+            "source": "./modules/networking",
+            "vpc_cidr": "var.vpc_cidr",
+            "vpc_enable_nat_gateway": "var.vpc_enable_nat_gateway",
+            "vpc_enable_vpn_gateway": "var.vpc_enable_vpn_gateway",
+            "vpc_id": "module.networking.vpc_id"
+          }
+        ]
+      },
+      {
+        "aurora": [
+          {
+            "allow_major_version_upgrade": "var.allow_major_version_upgrade",
+            "allowed_cidr_blocks": "var.allowed_cidr_blocks",
+            "apply_immediately": "var.apply_immediately",
+            "auto_minor_version_upgrade": "var.auto_minor_version_upgrade",
+            "autoscaling_rds": "var.autoscaling_rds",
+            "backtrack_window": "var.backtrack_window",
+            "backup_retention_period": "var.backup_retention_period",
+            "client": "var.client",
+            "copy_tags_to_snapshot": "var.copy_tags_to_snapshot",
+            "database_subnets": "module.networking.database_subnets",
+            "db_name": "var.db_name",
+            "db_parameter_group_family": "var.db_parameter_group_family",
+            "db_random_pass": "var.db_random_pass",
+            "db_version": "var.db_version",
+            "deletion_protection": "var.deletion_protection",
+            "engine_name": "var.engine_name",
+            "environment": "var.environment",
+            "instance_class": "var.instance_class",
+            "pass": "var.pass",
+            "preferred_backup_window": "var.preferred_backup_window",
+            "preferred_maintenance_window": "var.preferred_maintenance_window",
+            "publicly_accessible": "var.publicly_accessible",
+            "rds_max_scale": "var.rds_max_scale",
+            "rds_min_scale": "var.rds_min_scale",
+            "skip_finalSnapshot": "var.skip_finalSnapshot",
+            "source": "./modules/aurora_mysql",
+            "storage_encrypted": "var.storage_encrypted",
+            "user_name": "var.user_name",
+            "vpc_id": "module.networking.vpc_id"
+          }
+        ]
+      },
+      {
+        "ec2": [
+          {
+            "client": "var.client",
+            "ebs_encryption": "var.ebs_encryption",
+            "ec2_sg_id": "module.security_group_ec2.out_ec2_sg_id",
+            "environment": "var.environment",
+            "instance_type": "var.instance_type",
+            "key_name": "module.ssh-key.key_pair_key_name",
+            "source": "./modules/ec2-bastion",
+            "vpc_id": "module.networking.vpc_id",
+            "vpc_public_subnets": "module.networking.vpc_public_subnets"
+          }
+        ]
+      },
+      {
+        "ec2-private": [
+          {
+            "client": "var.client",
+            "ebs_encryption": "var.ebs_encryption",
+            "ec2_private_sg": "module.security_group_ec2_private.out_ec2_private_sg_id",
+            "environment": "var.environment",
+            "instance_type": "var.instance_type",
+            "key_name": "module.ssh-key.key_pair_key_name",
+            "source": "./modules/ec2-private",
+            "vpc_id": "module.networking.vpc_id",
+            "vpc_private_subnets": "module.networking.vpc_private_subnets"
+          }
+        ]
+      },
+      {
+        "ssh-key": [
+          {
+            "client": "var.client",
+            "source": "./modules/ssh-key"
+          }
+        ]
+      },
+      {
+        "alb": [
+          {
+            "backend_port": "var.backend_port",
+            "backend_protocol": "var.backend_protocol",
+            "client": "var.client",
+            "environment": "var.environment",
+            "lb_sg_id": "module.security_group_alb.out_lb_sg_id",
+            "listener_port": "var.listener_port",
+            "listener_protocol": "var.listener_protocol",
+            "name_prefix": "var.name_prefix",
+            "public_subnets": "module.networking.vpc_public_subnets",
+            "source": "./modules/alb",
+            "target_group_index": "var.target_group_index",
+            "target_type": "var.target_type",
+            "vpc_id": "module.networking.vpc_id"
+          }
+        ]
+      },
+      {
+        "asg": [
+          {
+            "ami_id": "var.ami_id",
+            "asg_desired_size": "var.asg_desired_size",
+            "asg_health_check_gc": "var.asg_health_check_gc",
+            "asg_health_check_type": "var.asg_health_check_type",
+            "asg_instance_type": "var.asg_instance_type",
+            "asg_max_size": "var.asg_max_size",
+            "asg_min_size": "var.asg_min_size",
+            "asg_sg_id": "module.security_group_asg.out_asg_sg_id",
+            "client": "var.client",
+            "environment": "var.environment",
+            "iam_instance_profile_name": "module.iam.out_iam_instance_profile_name",
+            "key_name": "module.ssh-key.key_pair_key_name",
+            "public_subnets": "module.networking.vpc_public_subnets",
+            "source": "./modules/asg",
+            "tg_arn": "module.alb.target_group_arns"
+          }
+        ]
+      },
+      {
+        "iam": [
+          {
+            "client": "var.client",
+            "environment": "var.environment",
+            "source": "./modules/iam"
+          }
+        ]
+      },
+      {
+        "security_group_ec2": [
+          {
+            "client": "var.client",
+            "environment": "var.environment",
+            "ingress_cidr_ec2": "var.ingress_cidr_ec2",
+            "ingress_ports_ec2": "var.ingress_ports_ec2",
+            "source": "./modules/security_groups_ec2",
+            "vpc_id": "module.networking.vpc_id"
+          }
+        ]
+      },
+      {
+        "security_group_ec2_private": [
+          {
+            "client": "var.client",
+            "environment": "var.environment",
+            "ingress_cidr_ec2_private": "var.ingress_cidr_ec2_private",
+            "ingress_ports_ec2_private": "var.ingress_ports_ec2_private",
+            "source": "./modules/security_groups_ec2-private",
+            "vpc_id": "module.networking.vpc_id"
+          }
+        ]
+      },
+      {
+        "security_group_alb": [
+          {
+            "client": "var.client",
+            "environment": "var.environment",
+            "ingress_cidr_alb": "var.ingress_cidr_alb",
+            "ingress_ports_alb": "var.ingress_ports_alb",
+            "source": "./modules/security_groups_alb",
+            "vpc_id": "module.networking.vpc_id"
+          }
+        ]
+      },
+      {
+        "security_group_rds": [
+          {
+            "client": "var.client",
+            "environment": "var.environment",
+            "rds_cidr": "var.rds_cidr",
+            "rds_from_port": "var.rds_from_port",
+            "rds_port_description": "var.rds_port_description",
+            "rds_protocol": "var.rds_protocol",
+            "rds_to_port": "var.rds_from_port",
+            "source": "./modules/security_groups_rds",
+            "vpc_id": "module.networking.vpc_id"
+          }
+        ]
+      },
+      {
+        "security_group_asg": [
+          {
+            "client": "var.client",
+            "environment": "var.environment",
+            "ingress_cidr_asg": "var.ingress_cidr_asg",
+            "ingress_ports_asg": "var.ingress_ports_asg",
+            "source": "./modules/security_groups_asg",
+            "vpc_id": "module.networking.vpc_id"
+          }
+        ]
+      }
+    ]
+  }
